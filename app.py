@@ -1,6 +1,10 @@
+import os
+
+os.environ.setdefault("KERAS_BACKEND", "jax")  # must be set before importing keras
+
 import streamlit as st
 import numpy as np
-import tensorflow as tf
+import keras
 from PIL import Image
 
 class_names = ["glass", "metal", "organic", "paper", "plastic"]
@@ -8,7 +12,7 @@ class_names = ["glass", "metal", "organic", "paper", "plastic"]
 
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("waste_mobilenetv2.keras")
+    return keras.models.load_model("waste_mobilenetv2.keras")
 
 
 model = load_model()
