@@ -21,7 +21,7 @@
 |:---:|:---:|:---:|:---:|
 | **93.1%** (MobileNetV2) | **0.93** | **6,405** | **+8 pts** with **400x fewer** trainable weights |
 
-**[Live Demo](https://your-app-name.streamlit.app)** &nbsp;|&nbsp; **[Notebook](notebooks/waste_classification.ipynb)** &nbsp;|&nbsp; **[Dataset](https://www.kaggle.com/datasets/mostafaabla/garbage-classification)** &nbsp;|&nbsp; **[Project Report](report/project_report.pdf)**
+**[Live Demo](https://your-app-name.streamlit.app)** &nbsp;|&nbsp; **[Notebook](waste_classification.ipynb)** &nbsp;|&nbsp; **[Dataset](https://www.kaggle.com/datasets/mostafaabla/garbage-classification)** &nbsp;|&nbsp; **[Project Report](project_report.pdf)**
 
 </div>
 
@@ -576,7 +576,7 @@ flowchart TB
 | Fast responses | `@st.cache_resource` loads the model once per session |
 | Transparent output | Predicted class, confidence and a probability bar for every class |
 
-### Core inference logic (`app/app.py`)
+### Core inference logic (`app.py`)
 
 ```python
 image = Image.open(uploaded_file).convert("RGB")
@@ -596,16 +596,16 @@ confidence = np.max(prediction) * 100
 
 - Python 3.10, 3.11 or 3.12
 - pip
-- The TensorFlow version used for training (see `app/requirements.txt`)
+- The TensorFlow version used for training (see `requirements.txt`)
 
 ### Run the web application locally
 
 ```bash
-git clone https://github.com/your-username/waste-classification.git
+git clone https://github.com/sidhantds/Waste-Classification.git
 ```
 
 ```bash
-cd waste-classification/app
+cd Waste-Classification
 ```
 
 ```bash
@@ -618,7 +618,7 @@ streamlit run app.py
 
 Open `http://localhost:8501` in a browser.
 
-`app/requirements.txt`:
+`requirements.txt`:
 
 ```
 streamlit
@@ -631,7 +631,7 @@ Saved `.keras` models are version-sensitive. Keep `tensorflow` pinned to the ver
 
 ### Reproduce training
 
-1. Open `notebooks/waste_classification.ipynb` in Google Colab.
+1. Open `waste_classification.ipynb` in Google Colab.
 2. Select **Runtime > Change runtime type > T4 GPU**.
 3. Select **Runtime > Run all**. The dataset downloads automatically through `kagglehub`.
 4. Trained models are saved as `waste_cnn.keras` and `waste_mobilenetv2.keras`.
@@ -640,7 +640,7 @@ Saved `.keras` models are version-sensitive. Keep `tensorflow` pinned to the ver
 
 1. Push the repository to GitHub.
 2. Sign in at [share.streamlit.io](https://share.streamlit.io) with GitHub.
-3. Select **New app**, choose this repository, and set the main file path to `app/app.py`.
+3. Select **New app**, choose this repository, and set the main file path to `app.py`.
 4. Deploy. The public URL can be used as the live demo link at the top of this README.
 
 ---
@@ -652,7 +652,7 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image
 
-model = tf.keras.models.load_model("app/waste_mobilenetv2.keras")
+model = tf.keras.models.load_model("waste_mobilenetv2.keras")
 class_names = ["glass", "metal", "organic", "paper", "plastic"]
 
 image = Image.open("bottle.jpg").convert("RGB").resize((224, 224))
@@ -688,18 +688,13 @@ Pass raw pixel values (0-255). Normalization is performed inside the model.
 ## Repository Structure
 
 ```
-waste-classification/
-├── notebooks/
-│   └── waste_classification.ipynb   End-to-end pipeline: data, models, evaluation
-├── app/
-│   ├── app.py                       Streamlit inference application
-│   ├── requirements.txt             Pinned dependencies
-│   └── waste_mobilenetv2.keras      Production model
-├── models/
-│   └── waste_cnn.keras              Baseline custom CNN
-├── assets/                          Charts, confusion matrices, screenshots, demo GIF
-├── report/
-│   └── project_report.pdf           Final project report
+Waste-Classification/
+├── assets/                          Charts, confusion matrices, screenshots
+├── app.py                           Streamlit inference application
+├── requirements.txt                 Pinned dependencies
+├── waste_mobilenetv2.keras          Production model (MobileNetV2)
+├── waste_classification.ipynb       End-to-end pipeline: data, models, evaluation
+├── project_report.pdf               Final project report
 ├── LICENSE
 └── README.md
 ```
@@ -750,8 +745,8 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 ## Author
 
-**Your Name**
+**Sidhant Pujara**
 Deep Learning Intern, Computer Vision and ML Engineering
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/your-profile)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/your-username)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/sidhantds)
