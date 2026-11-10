@@ -60,27 +60,43 @@
 
 <div align="center">
 
-<img src="assets/demo.gif" alt="Live app demo: uploading glass, metal and organic images and receiving predictions" width="420"/>
+<img src="assets/demo.gif" alt="Live app demo: uploading a glass bottle, metal cans and rotten fruit and receiving predictions" width="800"/>
 
-*Recorded on the deployed app: a glass bottle, metal cans and rotten fruit, each classified with per-class probabilities.*
+*Recorded on the deployed app: each upload returns the predicted material, its confidence and a ranked probability bar for every class.*
 
 </div>
 
-| Upload screen | Prediction result |
-|:---:|:---:|
-| <img src="assets/app_upload.png" alt="Upload screen" width="380"/> | <img src="assets/app_prediction.png" alt="Prediction result" width="300"/> |
+### Interface
 
-**What the demo shows**
+The app uses a two-column layout: the upload panel on the left and the results panel on the right.
 
-1. The user opens the web app and uploads a JPG or PNG image of a waste item.
-2. The image is converted to RGB, resized to 224x224 and passed to the MobileNetV2 model.
-3. The app displays the predicted class with its confidence, followed by probability bars for all five classes, so uncertain predictions are visible rather than hidden.
+<p align="center"><img src="assets/app_upload.png" alt="Empty state: upload panel on the left, results panel prompting for an image on the right" width="800"/></p>
 
-| Demo image | Prediction | Confidence |
-|---|---|:---:|
-| Green glass bottle | glass | 69.0% |
-| Metal cans | metal | 98.9% |
-| Rotten fruit | organic | 100.0% |
+<p align="center"><img src="assets/app_prediction.png" alt="Prediction result for metal cans: METAL, 98.9% confidence, with ranked class probabilities" width="800"/></p>
+
+| Panel | What it shows |
+|---|---|
+| Upload image | Drag-and-drop or browse for a JPG or PNG; the uploaded photo is previewed below the uploader |
+| Results: prediction | The predicted material with its class icon |
+| Results: confidence | The probability of the predicted class as a single metric |
+| Results: all class probabilities | Every class ranked from most to least likely, each with a progress bar, so uncertain predictions are visible rather than hidden |
+
+### How a prediction is made
+
+1. The uploaded image is converted to RGB, which handles grayscale and transparent PNG files.
+2. It is resized to 224x224 and converted to a float32 batch of one image.
+3. The cached MobileNetV2 model, served with Keras 3 on the JAX backend, returns five class probabilities. Normalization happens inside the model.
+4. The highest probability becomes the prediction, and all five are shown in descending order.
+
+### Demo results
+
+| Demo image | Prediction | Confidence | Runner-up |
+|---|---|:---:|---|
+| Green glass bottle | glass | 69.0% | plastic, 30.9% |
+| Metal cans | metal | 98.9% | glass, 1.0% |
+| Rotten fruit | organic | 100.0% | below 0.1% for all other classes |
+
+The glass bottle is the least confident prediction, and its runner-up is plastic. This matches the glass/plastic confusion seen in the confusion matrix: transparent bottles look alike in both materials.
 
 <!-- TODO: save the Cell 28 grid as assets/sample_predictions.png and uncomment
 **Model predictions on the held-out test set** (green = correct, red = incorrect)
