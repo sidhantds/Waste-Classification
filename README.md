@@ -8,6 +8,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)
+![JAX](https://img.shields.io/badge/Serving-Keras_3_%2B_JAX-5E97F6?style=flat-square)
 ![Keras](https://img.shields.io/badge/Keras-CNN-D00000?style=flat-square&logo=keras&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-Metrics-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Web_App-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
@@ -21,7 +22,7 @@
 |:---:|:---:|:---:|:---:|
 | **93.1%** (MobileNetV2) | **0.93** | **6,405** | **+8 pts** with **400x fewer** trainable weights |
 
-**[Live Demo](https://your-app-name.streamlit.app)** &nbsp;|&nbsp; **[Notebook](waste_classification.ipynb)** &nbsp;|&nbsp; **[Dataset](https://www.kaggle.com/datasets/mostafaabla/garbage-classification)** &nbsp;|&nbsp; **[Project Report](project_report.pdf)**
+**[Live Demo](https://waste-classification10.streamlit.app)** &nbsp;|&nbsp; **[Notebook](waste_classification.ipynb)** &nbsp;|&nbsp; **[Dataset](https://www.kaggle.com/datasets/mostafaabla/garbage-classification)** &nbsp;|&nbsp; **[Project Report](project_report.pdf)**
 
 </div>
 
@@ -55,29 +56,31 @@
 
 ## Demo
 
+**Try it live: [waste-classification10.streamlit.app](https://waste-classification10.streamlit.app)**
+
 <div align="center">
 
-<img src="assets/unseen_predictions.png" alt="Prediction on an image from outside the dataset" width="320"/>
+<img src="assets/demo.gif" alt="Live app demo: uploading glass, metal and organic images and receiving predictions" width="420"/>
 
-*Prediction on an image from outside the training dataset: glass, 94.7% confidence.*
+*Recorded on the deployed app: a glass bottle, metal cans and rotten fruit, each classified with per-class probabilities.*
 
-</div>
-
-<!-- TODO: after running the Streamlit app, add these files to assets/ and uncomment this block
-<div align="center">
-<img src="assets/demo.gif" alt="Application demo: uploading an image and receiving a prediction" width="760"/>
 </div>
 
 | Upload screen | Prediction result |
 |:---:|:---:|
-| <img src="assets/app_upload.png" alt="Upload screen" width="380"/> | <img src="assets/app_prediction.png" alt="Prediction result" width="380"/> |
--->
+| <img src="assets/app_upload.png" alt="Upload screen" width="380"/> | <img src="assets/app_prediction.png" alt="Prediction result" width="300"/> |
 
 **What the demo shows**
 
 1. The user opens the web app and uploads a JPG or PNG image of a waste item.
 2. The image is converted to RGB, resized to 224x224 and passed to the MobileNetV2 model.
 3. The app displays the predicted class with its confidence, followed by probability bars for all five classes, so uncertain predictions are visible rather than hidden.
+
+| Demo image | Prediction | Confidence |
+|---|---|:---:|
+| Green glass bottle | glass | 69.0% |
+| Metal cans | metal | 98.9% |
+| Rotten fruit | organic | 100.0% |
 
 <!-- TODO: save the Cell 28 grid as assets/sample_predictions.png and uncomment
 **Model predictions on the held-out test set** (green = correct, red = incorrect)
@@ -101,7 +104,7 @@ The full machine learning lifecycle was implemented:
 | Preprocessing | Stratified 70/15/15 split, resizing, normalization and on-the-fly augmentation |
 | Modeling | A custom CNN baseline trained from scratch, then MobileNetV2 transfer learning |
 | Evaluation | Accuracy, precision, recall, F1, confusion matrices, error analysis and real-world image tests |
-| Deployment | A Streamlit web application serving the best model |
+| Deployment | A Streamlit web application serving the best model, live on Streamlit Community Cloud |
 | Reliability | Detected and fixed three silent data bugs, including train/test data leakage |
 
 ---
@@ -114,7 +117,7 @@ The full machine learning lifecycle was implemented:
 - **Guaranteed training/serving parity**, measured by identical predictions in the notebook and the web app on the same unseen image (glass, 94.7%), by embedding normalization and augmentation inside the model graph.
 - **Fixed a silent label-mapping bug** that displayed predictions under the wrong class names, measured by a corrected classification report and prediction grid, by deriving class names directly from the data pipeline.
 - **Prevented overfitting in a 2.6M-parameter CNN**, measured by training and validation curves staying within a few points of each other across 30 epochs, by combining data augmentation, 50% dropout and early stopping.
-- **Delivered a usable product**, measured by a working upload-and-predict web application with per-class confidence bars, by building a Streamlit front end that caches the model and reproduces the exact training preprocessing.
+- **Delivered a publicly accessible product**, measured by a live upload-and-predict web application on Streamlit Community Cloud, by building a Streamlit front end that caches the model, reproduces the exact training preprocessing and serves the model on a Keras 3 + JAX backend.
 
 ---
 
@@ -594,9 +597,8 @@ confidence = np.max(prediction) * 100
 
 ### Prerequisites
 
-- Python 3.10, 3.11 or 3.12
+- Python 3.10 or newer (the deployed app runs on Python 3.14)
 - pip
-- The TensorFlow version used for training (see `requirements.txt`)
 
 ### Run the web application locally
 
@@ -622,12 +624,14 @@ Open `http://localhost:8501` in a browser.
 
 ```
 streamlit
-tensorflow==2.19.0
+keras>=3.13
+jax[cpu]
+h5py
 pillow
 numpy
 ```
 
-Saved `.keras` models are version-sensitive. Keep `tensorflow` pinned to the version used in training.
+The model was trained with TensorFlow in Colab but is served with **Keras 3 on the JAX backend**. Streamlit Community Cloud runs Python 3.14, for which TensorFlow 2.19 has no packages. The model uses only built-in Keras layers, so the same `.keras` file loads on JAX without retraining. `app.py` sets `KERAS_BACKEND=jax` before importing Keras.
 
 ### Reproduce training
 
@@ -641,18 +645,21 @@ Saved `.keras` models are version-sensitive. Keep `tensorflow` pinned to the ver
 1. Push the repository to GitHub.
 2. Sign in at [share.streamlit.io](https://share.streamlit.io) with GitHub.
 3. Select **New app**, choose this repository, and set the main file path to `app.py`.
-4. Deploy. The public URL can be used as the live demo link at the top of this README.
+4. Deploy. This project is live at [waste-classification10.streamlit.app](https://waste-classification10.streamlit.app).
 
 ---
 
 ## Using the Model in Python
 
 ```python
+import os
+os.environ.setdefault("KERAS_BACKEND", "jax")
+
 import numpy as np
-import tensorflow as tf
+import keras
 from PIL import Image
 
-model = tf.keras.models.load_model("waste_mobilenetv2.keras")
+model = keras.models.load_model("waste_mobilenetv2.keras")
 class_names = ["glass", "metal", "organic", "paper", "plastic"]
 
 image = Image.open("bottle.jpg").convert("RGB").resize((224, 224))
@@ -724,7 +731,7 @@ Waste-Classification/
 | ML engineering | Reproducible stratified splits, data-leakage detection, training/serving parity, model serialization |
 | Evaluation | Precision, recall, F1, macro and weighted averages, confusion-matrix error analysis, baselines |
 | Debugging | Root-cause analysis of silent data bugs, sanity checks, idempotent pipelines |
-| Deployment | Streamlit web application, model caching, dependency pinning, Streamlit Community Cloud |
+| Deployment | Streamlit web application, model caching, Keras 3 multi-backend serving (JAX), Streamlit Community Cloud |
 | Tools | Google Colab (T4 GPU), Kaggle, Git, GitHub, VS Code |
 
 ---
