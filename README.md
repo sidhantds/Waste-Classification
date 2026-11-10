@@ -57,15 +57,21 @@
 
 <div align="center">
 
+<img src="assets/unseen_predictions.png" alt="Prediction on an image from outside the dataset" width="320"/>
+
+*Prediction on an image from outside the training dataset: glass, 94.7% confidence.*
+
+</div>
+
+<!-- TODO: after running the Streamlit app, add these files to assets/ and uncomment this block
+<div align="center">
 <img src="assets/demo.gif" alt="Application demo: uploading an image and receiving a prediction" width="760"/>
-
-*Upload a photo, get the material class, a confidence score and the probability for every class.*
-
 </div>
 
 | Upload screen | Prediction result |
 |:---:|:---:|
 | <img src="assets/app_upload.png" alt="Upload screen" width="380"/> | <img src="assets/app_prediction.png" alt="Prediction result" width="380"/> |
+-->
 
 **What the demo shows**
 
@@ -73,9 +79,11 @@
 2. The image is converted to RGB, resized to 224x224 and passed to the MobileNetV2 model.
 3. The app displays the predicted class with its confidence, followed by probability bars for all five classes, so uncertain predictions are visible rather than hidden.
 
+<!-- TODO: save the Cell 28 grid as assets/sample_predictions.png and uncomment
 **Model predictions on the held-out test set** (green = correct, red = incorrect)
 
 <p align="center"><img src="assets/sample_predictions.png" alt="Sample predictions on test images" width="620"/></p>
+-->
 
 ---
 
@@ -214,7 +222,9 @@ Excluded as out of scope: `battery`, `cardboard`, `clothes`, `shoes`, `trash`.
 | Most photos have plain white backgrounds; some carry stock-photo watermarks | Identified as a real-world generalization risk; tested separately on unseen photos |
 | Pixel values range from 0 to 255 | Normalization layer added inside each model |
 
+<!-- TODO: save the Cell 8 figure as assets/sample_images.png and uncomment
 <p align="center"><img src="assets/sample_images.png" alt="One sample image per class" width="760"/></p>
+-->
 
 ---
 
@@ -466,9 +476,9 @@ flowchart TB
 
 ### Confusion matrices
 
-| Custom CNN | MobileNetV2 |
-|:---:|:---:|
-| <img src="assets/cnn_confusion_matrix.png" alt="CNN confusion matrix" width="430"/> | <img src="assets/mobilenet_confusion_matrix.png" alt="MobileNetV2 confusion matrix" width="430"/> |
+<p align="center"><img src="assets/mobilenet_confusion_matrix.png" alt="MobileNetV2 confusion matrix" width="460"/></p>
+
+<!-- TODO: save the Cell 27 matrix as assets/cnn_confusion_matrix.png and add it next to the MobileNetV2 matrix -->
 
 ### Error analysis
 
@@ -493,7 +503,7 @@ Images collected outside the Kaggle dataset.
 | Banana peel | organic | | | |
 | Newspaper | paper | | | |
 
-<p align="center"><img src="assets/unseen_predictions.png" alt="Predictions on unseen images" width="620"/></p>
+<p align="center"><img src="assets/unseen_predictions.png" alt="Predictions on unseen images" width="320"/></p>
 
 ---
 
